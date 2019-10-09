@@ -1,5 +1,6 @@
 """
-Pixels are defined with 0, 0 being the top left pixel.
+Pixels are defined with 1, 1 being the top left pixel.
+Undefined behavior if entering negative pixel positions.
 """
 
 from PIL import Image, ImageColor
@@ -14,11 +15,12 @@ for filename in os.listdir(samplesPath):
 	images[filename] = Image.open(samplesPath + filename)
 
 for filename, img in images.items():
+	width, height = img.size
 	img = img.convert('RGB')
 	print('=' * 30 + ' ' + filename.upper() + ' ' + '=' * 30)
-	print('Please define the rectangle of pixels to evaluate for ' + filename)
-	x1, y1 = [int(v) for v in input('Enter the x y position of the top left pixel: ').strip().split()]
-	x2, y2 = [int(v) for v in input('Enter the x y position of the bottom right pixel: ').strip().split()]
+	print('Please define the rectangle of pixels to evaluate for ' + filename + ' (' + str(width) + ', ' + str(height) + ')')
+	x1, y1 = [int(v) - 1 for v in input('Enter the x y position of the top left pixel: ').strip().split()]
+	x2, y2 = [int(v) - 1 for v in input('Enter the x y position of the bottom right pixel: ').strip().split()]
 	
 	assert(x1 <= x2 and y1 <= y2)
 	totalSaturation = 0
