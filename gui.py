@@ -39,11 +39,27 @@ class GUI:
 			if self.current_mode == 'area':
 				if not self.corners:
 					self.corners.append(self.canvas.create_oval(x-2, y-2, x+2, y+2, fill='white'))
+				elif len(self.corners) == 1:
+					self.corners.append(self.canvas.create_oval(x-2, y-2, x+2, y+2, fill='white'))
+					x1, y1, *_ = self.canvas.coords(self.corners[0])
+					x2, y2, *_ = self.canvas.coords(self.corners[1])
+					self.get_pixel_data(x1, y1, x2, y2)
+				else:
+					self.clear_drawings()
+					self.clear_drawing_data()
+					self.corners.append(self.canvas.create_oval(x-2, y-2, x+2, y+2, fill='white'))
 			elif self.current_mode == 'pixel':
 				self.get_pixel_data(x, y, x, y)
 
 	def get_pixel_data(self, x1, y1, x2, y2):
-		assert(x1 <= x2 and y1 <= y2)
+		x1 = round(x1)
+		y1 = round(y1)
+		x2 = round(x2)
+		y2 = round(y2)
+		if x2 < x1:
+			x1, x2 = x2, x1
+		if y2 < y1:
+			y1, y2 = y2, y1
 		totalSaturation = 0
 		c = 0
 		for y in range(y1, y2 + 1):
@@ -68,10 +84,19 @@ class GUI:
 			self.x.configure(text='x: ' + str(x))
 			self.y.configure(text='y: ' + str(y))
 			if len(self.corners) == 1:
-				for line in self.sight_lines:
-					self.canvas.delete(line)
-
-
+				self.draw_sight_lines(x, y)
+	
+	def draw_sight_lines(self, x, y):
+		for line in self.sight_lines:
+				self.canvas.delete(line)
+		lx, ly, *_ = self.canvas.coords(self.corners[0])
+		lx += 2
+		ly += 2
+		self.sight_lines.append(self.canvas.create_line(lx, ly, x, ly, dash=(3, 3)))
+		self.sight_lines.append(self.canvas.create_line(lx, ly, lx, y, dash=(3, 3)))
+		self.sight_lines.append(self.canvas.create_line(x, ly, x, y, dash=(3, 3)))
+		self.sight_lines.append(self.canvas.create_line(lx, y, x, y, dash=(3, 3)))
+			
 	def _generate_window(self):
 		"""
 		Generate the components inside the window.
@@ -120,6 +145,16 @@ class GUI:
 			self.image_name.configure(text=self.current_image_name.split('/')[-1])
 			self.open_image()
 
+	def clear_drawing_data(self):
+		self.corners = []
+		self.sight_lines = []
+
+	def clear_drawings(self):
+		for line in self.sight_lines:
+			self.canvas.delete(line)
+		for dot in self.corners:
+			self.canvas.delete(dot)
+
 	def open_image(self):
 		self.current_image = Image.open(self.current_image_name)
 		current_image_tk = ImageTk.PhotoImage(self.current_image)
@@ -130,13 +165,18 @@ class GUI:
 		self.canvas.image = current_image_tk
 
 	def pixel_mode(self):
+		self.clear_drawings()
+		self.clear_drawing_data()
 		self.pixel_mode_button.config(relief=SUNKEN)
 		self.area_mode_button.config(relief=RAISED)
 		self.current_mode = 'pixel'
 	
 	def area_mode(self):
+		self.clear_drawings()
+		self.clear_drawing_data()
 		self.area_mode_button.config(relief=SUNKEN)
 		self.pixel_mode_button.config(relief=RAISED)
+		self.current_mode = 'area'
 
 
 if __name__ == '__main__':
