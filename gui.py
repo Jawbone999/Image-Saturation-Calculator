@@ -69,19 +69,31 @@ class GUI:
 			x1, x2 = x2, x1
 		if y2 < y1:
 			y1, y2 = y2, y1
-		totalSaturation = 0
+		total_saturation = 0
+		total_r = 0
+		total_g = 0
+		total_b = 0
 		c = 0
 		for y in range(y1, y2 + 1):
 			for x in range(x1, x2 + 1):
 				r, g, b, *_ = self.current_image.getpixel((x, y))
-				totalSaturation += rgb_to_hsv(r, g, b)[1]
+				total_saturation += rgb_to_hsv(r, g, b)[1]
+				total_r += r
+				total_g += g
+				total_b += b
 				c += 1
-		avg = round((totalSaturation / c) * 100, 2)
-		self.write_pixel_data(avg, c)
+		avg_saturation = round((total_saturation / c) * 100, 2)
+		avg_r = round(total_r / c)
+		avg_g = round(total_g / c)
+		avg_b = round(total_b / c)
+		self.write_pixel_data(avg_saturation, avg_r, avg_g, avg_b, c)
 
-	def write_pixel_data(self, avg, c):
+	def write_pixel_data(self, sat, r, g, b, c):
 		self.num_pixels.configure(text='# Pixels: ' + str(c))
-		self.saturation.configure(text='Saturation: ' + str(avg) + '%')
+		self.saturation.configure(text='Saturation: ' + str(sat) + '%')
+		self.r.configure(text='r: ' + str(r))
+		self.g.configure(text='g: ' + str(g))
+		self.b.configure(text='b: ' + str(b))
 
 	def leave(self, event):
 		self.x.configure(text='x: ')
@@ -105,7 +117,7 @@ class GUI:
 		self.sight_lines.append(self.canvas.create_line(lx, ly, lx, y, dash=(3, 3)))
 		self.sight_lines.append(self.canvas.create_line(x, ly, x, y, dash=(3, 3)))
 		self.sight_lines.append(self.canvas.create_line(lx, y, x, y, dash=(3, 3)))
-			
+
 	def _generate_window(self):
 		"""
 		Generate the components inside the window.
@@ -122,6 +134,9 @@ class GUI:
 		self.separator = Message(info_panel, text='=======', width=75)
 		self.x = Message(info_panel, text='x: ', width=40)
 		self.y = Message(info_panel, text='y: ', width=40)
+		self.r = Message(info_panel, text='r: ', width=40)
+		self.g = Message(info_panel, text='g: ', width=40)
+		self.b = Message(info_panel, text='b: ', width=40)
 		self.num_pixels = Message(info_panel, text='# Pixels: ', width = 50)
 		self.saturation = Message(info_panel, text='Saturation: ', width=75)
 		self.pixel_mode_button = Button(info_panel, text='Pixel Mode', command=self.pixel_mode)
@@ -136,6 +151,9 @@ class GUI:
 		self.separator.grid()
 		self.x.grid(sticky=W)
 		self.y.grid(sticky=W)
+		self.r.grid(sticky=W)
+		self.g.grid(sticky=W)
+		self.b.grid(sticky=W)
 		self.num_pixels.grid(sticky=W)
 		self.saturation.grid(sticky=W)
 		self.area_mode_button.grid()
