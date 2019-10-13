@@ -187,6 +187,8 @@ class GUI:
 		current_image_tk = ImageTk.PhotoImage(self.current_image)
 		width = current_image_tk.width()
 		height = current_image_tk.height()
+		self.image_width.config(text='W: ' + str(width))
+		self.image_height.config(text='H: ' + str(height))
 		self.canvas.config(width=width - 4, height=height - 4)
 		self.canvas.create_image(round(width / 2), round(height / 2), anchor=CENTER, image=current_image_tk)
 		self.canvas.image = current_image_tk
