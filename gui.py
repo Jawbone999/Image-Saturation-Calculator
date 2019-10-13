@@ -1,5 +1,5 @@
 from PIL import Image, ImageTk
-from tkinter import Tk, Message, Label, ttk, Button, Canvas, Y, HORIZONTAL, N, W, RIGHT, LEFT, TOP, S, CENTER, PhotoImage, SUNKEN, RAISED, E
+from tkinter import Tk, Message, ttk, Button, Canvas, Y, W, LEFT, S, CENTER, PhotoImage, SUNKEN, RAISED
 from tkinter.filedialog import askopenfilename
 from colorsys import rgb_to_hsv
 
@@ -8,21 +8,27 @@ class GUI:
 	A class to represent the gui for this program.
 	"""
 	def __init__(self):
+		# There may be other compatible types I am not aware of
 		self.image_types = ['png', 'jpg', 'gif', 'jpeg']
 
+		# Create window
 		self.window = Tk()
 		self.window.title("Image Saturation Reader")
+
+		# Set default variables
 		self.current_image_name = "None Selected"
 		self.current_image = None
 		self.current_mode = 'area'
 		self.corners = []
 		self.sight_lines = []
 
+		# Find screen height
 		width = self.window.winfo_screenwidth()
 		height = self.window.winfo_screenheight()
 		self.width = width - (width // 2)
 		self.height = height - (height // 2)
 
+		# Populate window
 		self._generate_window()
 
 		# Bind events
@@ -34,6 +40,9 @@ class GUI:
 		self.area_mode_button.config(relief=SUNKEN)
 	
 	def click(self, event):
+		"""
+		Clicking within the canvas.
+		"""
 		if self.current_image is not None:
 			x, y = event.x, event.y
 			if self.current_mode == 'area':
@@ -72,7 +81,7 @@ class GUI:
 
 	def write_pixel_data(self, avg, c):
 		self.num_pixels.configure(text='# Pixels: ' + str(c))
-		self.saturation.configure(text='Saturation: ' + str(avg))
+		self.saturation.configure(text='Saturation: ' + str(avg) + '%')
 
 	def leave(self, event):
 		self.x.configure(text='x: ')
