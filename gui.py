@@ -3,6 +3,13 @@ from tkinter import Tk, Message, ttk, Button, Canvas, Y, W, LEFT, S, CENTER, Pho
 from tkinter.filedialog import askopenfilename
 from colorsys import rgb_to_hsv
 
+
+"""
+TODO:
+Add image scrollbar.
+
+"""
+
 class GUI:
 	"""
 	A class to represent the gui for this program.
