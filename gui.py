@@ -69,7 +69,9 @@ class GUI:
 			x1, x2 = x2, x1
 		if y2 < y1:
 			y1, y2 = y2, y1
+		total_hue = 0
 		total_saturation = 0
+		total_value = 0
 		total_r = 0
 		total_g = 0
 		total_b = 0
@@ -77,20 +79,27 @@ class GUI:
 		for y in range(y1, y2 + 1):
 			for x in range(x1, x2 + 1):
 				r, g, b, *_ = self.current_image.getpixel((x, y))
-				total_saturation += rgb_to_hsv(r, g, b)[1]
+				data = rgb_to_hsv(r, g, b)
+				total_hue += data[0]
+				total_saturation += data[1]
+				total_value += data[2]
 				total_r += r
 				total_g += g
 				total_b += b
 				c += 1
+		avg_hue = round((total_hue / c), 2)
 		avg_saturation = round((total_saturation / c) * 100, 2)
-		avg_r = round(total_r / c)
-		avg_g = round(total_g / c)
-		avg_b = round(total_b / c)
-		self.write_pixel_data(avg_saturation, avg_r, avg_g, avg_b, c)
+		avg_value = round((total_value / c), 2)
+		avg_r = round((total_r / c), 2)
+		avg_g = round((total_g / c), 2)
+		avg_b = round((total_b / c), 2)
+		self.write_pixel_data(avg_hue, avg_saturation, avg_value, avg_r, avg_g, avg_b, c)
 
-	def write_pixel_data(self, sat, r, g, b, c):
+	def write_pixel_data(self, hue, sat, val, r, g, b, c):
 		self.num_pixels.configure(text='# Pixels: ' + str(c))
+		self.hue.configure(text='Hue: ' + str(hue))
 		self.saturation.configure(text='Saturation: ' + str(sat) + '%')
+		self.value.configure(text='Value: ' + str(val))
 		self.r.configure(text='r: ' + str(r))
 		self.g.configure(text='g: ' + str(g))
 		self.b.configure(text='b: ' + str(b))
@@ -138,7 +147,9 @@ class GUI:
 		self.g = Message(info_panel, text='g: ', width=40)
 		self.b = Message(info_panel, text='b: ', width=40)
 		self.num_pixels = Message(info_panel, text='# Pixels: ', width = 50)
+		self.hue = Message(info_panel, text='Hue: ', width=75)
 		self.saturation = Message(info_panel, text='Saturation: ', width=75)
+		self.value = Message(info_panel, text='Value: ', width=75)
 		self.pixel_mode_button = Button(info_panel, text='Pixel Mode', command=self.pixel_mode)
 		self.area_mode_button = Button(info_panel, text='Area Mode', command=self.area_mode)
 
@@ -155,7 +166,9 @@ class GUI:
 		self.g.grid(sticky=W)
 		self.b.grid(sticky=W)
 		self.num_pixels.grid(sticky=W)
+		self.hue.grid(sticky=W)
 		self.saturation.grid(sticky=W)
+		self.value.grid(sticky=W)
 		self.area_mode_button.grid()
 		self.pixel_mode_button.grid()
 
