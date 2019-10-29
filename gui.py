@@ -44,8 +44,6 @@ class GUI:
 		self.canvas.bind('<Motion>', self.motion)
 		self.canvas.bind('<Leave>', self.leave)
 		self.canvas.bind('<Button-1>', self.click)
-		#self.canvas.config(yscrollcommand=self.y_bar.set)
-		#self.canvas.config(xscrollcommand=self.x_bar.set)
 
 		# Final stylizations
 		self.area_mode_button.config(relief=SUNKEN)
@@ -100,20 +98,10 @@ class GUI:
 		self.x_bar = Scrollbar(self.canvas, orient="horizontal", command=self.canvas.xview)
 		print()
 		self.y_bar = Scrollbar(self.canvas, orient="vertical", command=self.canvas.yview)
-		
-		# Place components in right panel
-		#self.x_bar.grid(row=1, column=0, sticky="ew")
-		#self.y_bar.grid(row=0, column=1, sticky="ns")
-		#self.x_bar.rowconfigure(1, weight=1)
-		#self.y_bar.columnconfigure(1, weight=1)
 
 		# Add two sides to final window
 		info_panel.grid(column=1, row=1)
 		self.canvas.grid(column=2, row=1)
-
-		# Final Configurations
-		# self.canvas.config(scrollregion=[0, 0, self.width, self.height])
-		self.canvas.configure(scrollregion=self.canvas.bbox("all"))
 
 	def choose_image(self):
 		self.current_image_name = askopenfilename()
