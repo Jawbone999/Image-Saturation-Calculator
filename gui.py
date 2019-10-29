@@ -124,7 +124,7 @@ class GUI:
 
 	def open_image(self):
 		self.current_image = Image.open(self.current_image_name)
-		self.current_image.thumbnail((self.canvas.winfo_width, self.canvas.winfo_height), Image.ANTIALIAS)
+		self.current_image.thumbnail((self.width, self.height), Image.ANTIALIAS)
 		current_image_tk = ImageTk.PhotoImage(self.current_image)
 		width = current_image_tk.width()
 		height = current_image_tk.height()
