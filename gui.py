@@ -23,19 +23,19 @@ class GUI:
 		# Create window
 		self.window = Tk()
 		self.window.title("Image Saturation Reader")
+		self.window.state("zoomed")
 
 		# Set default variables
 		self.current_image_name = "None Selected"
 		self.current_image = None
 		self.current_mode = 'area'
+		self.canvas_size = None
 		self.corners = []
 		self.sight_lines = []
 
 		# Find screen height
-		width = self.window.winfo_screenwidth()
-		height = self.window.winfo_screenheight()
-		self.width = width - (width // 2)
-		self.height = height - (height // 2)
+		self.width = self.window.winfo_screenwidth()
+		self.height = self.window.winfo_screenheight()
 
 		# Populate window
 		self._generate_window()
@@ -95,13 +95,10 @@ class GUI:
 
 		# Create right panel components
 		self.canvas = Canvas(self.window, width=self.width, height=self.height, bg='lightblue')
-		self.x_bar = Scrollbar(self.canvas, orient="horizontal", command=self.canvas.xview)
-		print()
-		self.y_bar = Scrollbar(self.canvas, orient="vertical", command=self.canvas.yview)
 
 		# Add two sides to final window
 		info_panel.grid(column=1, row=1)
-		self.canvas.grid(column=2, row=1)
+		self.canvas.grid(column=2, row=1, sticky="nesw")
 
 	def choose_image(self):
 		self.current_image_name = askopenfilename()
@@ -111,8 +108,11 @@ class GUI:
 			self.clear_drawing_data()
 
 	def open_image(self):
+		if self.canvas_size is None:
+			self.set_canvas_size()
+
 		self.current_image = Image.open(self.current_image_name)
-		self.current_image.thumbnail((self.width, self.height), Image.ANTIALIAS)
+		self.current_image.thumbnail(self.canvas_size, Image.ANTIALIAS)
 		current_image_tk = ImageTk.PhotoImage(self.current_image)
 		width = current_image_tk.width()
 		height = current_image_tk.height()
@@ -121,6 +121,9 @@ class GUI:
 		self.canvas.config(width=width - 4, height=height - 4)
 		self.canvas.create_image(round(width / 2), round(height / 2), anchor=CENTER, image=current_image_tk)
 		self.canvas.image = current_image_tk
+
+	def set_canvas_size(self):
+		self.canvas_size = (self.canvas.winfo_width(), self.window.winfo_height())
 
 	def click(self, event):
 		"""
@@ -232,7 +235,10 @@ class GUI:
 		for dot in self.corners:
 			self.canvas.delete(dot)
 
+	def mainloop(self):
+		self.window.mainloop()
+
 
 if __name__ == '__main__':
 	ui = GUI()
-	ui.window.mainloop()
+	ui.mainloop()
